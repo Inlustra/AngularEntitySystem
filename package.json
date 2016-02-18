@@ -1,0 +1,16 @@
+{
+  "name": "angular-entity-system",
+  "private": true,
+  "version": "0.0.0",
+  "description": "A custom API, Entity and Factory system for AngularJS",
+  "repository": "https://github.com/angular/angular-seed",
+  "license": "MIT",
+  "devDependencies": {
+    "bower": "^1.7.7",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-uglify": "^0.11.1"
+  },
+  "dependencies": {
+  }
+}

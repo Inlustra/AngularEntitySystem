@@ -1,0 +1,24 @@
+{
+  "name": "angular-entity-system",
+  "description": "A custom API, Entity and Factory system for AngularJS",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "src",
+    ".bowerrc",
+    ".gitignore",
+    ".jshintrc",
+    "bower.json",
+    "Gruntfile.js",
+    "package.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "angular": "~1.4.0"
+  },
+  "main": [
+    "dist/angular-entity-system.js"
+  ]
+}
