@@ -88,7 +88,7 @@ Currently, only 2 Mutators have been written. (More to be added with feedback?).
 A Date Mutator and an EntityMutator, allowing inner Objects to also be converted to entities
 
 ```json
-{"innerEntity": {sampleDate: "2016-02-19T15:21:52.000+0000"}}
+{"innerEntity": {"sampleDate": "2016-02-19T15:21:52.000+0000"}}
 ```
 We need an entity per nested object.
 ```javascript
@@ -106,7 +106,7 @@ We need an entity per nested object.
     function InnerObject() {
     }
     
-    InnerObject.prototype.innerEntity = new DateMutator(InnerObject);
+    InnerObject.prototype.sampleDate = new DateMutator(); //Doesn't need a 'new' unless the mutator has a state
     
    ... Extra methods
     return angular.extend(InnerObject, Entity);
@@ -114,8 +114,8 @@ We need an entity per nested object.
 ```
 Mutators have been written in such a way that the Builder will accept both an Array and an Object.
 ```json
-{"innerEntity": {sampleDate: "2016-02-19T15:21:52.000+0000"}}
-{"innerEntity": {sampleDate: ["2016-02-19T15:21:52.000+0000","2016-02-19T15:21:52.000+0000"]}}
+{"innerEntity": {"sampleDate": "2016-02-19T15:21:52.000+0000"}}
+{"innerEntity": {"sampleDate": ["2016-02-19T15:21:52.000+0000","2016-02-19T15:21:52.000+0000"]}}
 ```
 #### Creating Mutators
 
@@ -136,7 +136,7 @@ Mutators have been written in such a way that the Builder will accept both an Ar
    Most methods in EntityAPI either return EntityAPI or a promise with the exception of delete. 
    (Need ideas here, the api can certainly be improved)
    
-   #### Config
+#### Config
    
    `EntityAPIProvider.setApiUrl("http://baseurl.com");` 
    This adds a base url to all EntityApi methods.
@@ -156,7 +156,6 @@ Mutators have been written in such a way that the Builder will accept both an Ar
    `EntityAPIProvider.setOnError(function(error){});`
    Adds a function to be called when $http returns an error
    
-get, post, delete and 
 ## License
 
 MIT License
