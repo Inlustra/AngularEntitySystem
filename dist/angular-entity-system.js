@@ -1,7 +1,7 @@
 !function() {
     "use strict";
     angular.module("angular-entity-system", []);
-}(), angular.module("angular-entity-system").provider("APIConfig", function() {
+}(), angular.module("angular-entity-system").provider("EntityAPI", function() {
     var apiUrl = "", entityIdentity = "id";
     this.setApiUrl = function(value) {
         this.apiUrl = value;
