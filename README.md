@@ -4,7 +4,18 @@ An entity system wrapper used to turn raw JSON objects into useful entities!
 
 ## Installation
 
-//TODO - VIA BOWER
+Via Bower: 
+```bash
+bower install angular-entity-system
+```
+
+Add module to AngularJS:
+```javascript
+angular.module('<Your Module Here>', [
+   'angular-entity-system'
+   ...
+]);
+```
 
 ## Example
 
@@ -20,7 +31,7 @@ Take the following json:
 ```
 
 The dates are considered Strings and any extra methods such as duration would have to be added manually. with the following code,
-we can assign meaning to the JSON object.
+we can assign meaning to the JSON object. Using Mutators, we can also assign meaning to sub objects. See below for current Mutator types.
 
 First, we create our DurationObject and add any extra methods we'd like to that.
 
@@ -30,8 +41,6 @@ angular.module('my-module').factory('DurationObject', ["Entity", "DateMutator", 
     function DurationObject() {
     }
 
-    DurationObject.prototype.id = -1;
-    DurationObject.prototype.name = "";
     DurationObject.prototype.startTime = new DateMutator();
     DurationObject.prototype.endTime = new DateMutator();
 
@@ -50,33 +59,7 @@ angular.module('my-module').factory('DurationObject', ["Entity", "DateMutator", 
         return 'Upcoming';
     };
 
-    DurationObject.prototype.getTimeUntilEnd = function (humanize) {
-        var date = moment(new Date()).twix(this.endTime);
-        return humanize ? date.humanizeLength() : date;
-    };
-
-    DurationObject.prototype.getTimeSinceEnd = function (humanize) {
-        var date = moment(this.endTime).twix(new Date());
-        return humanize ? date.humanizeLength() : date;
-    };
-
-    DurationObject.prototype.getTimeUntilStart = function (humanize) {
-        var date = moment(new Date()).twix(this.startTime);
-        return humanize ? date.humanizeLength() : date;
-    };
-
-    DurationObject.prototype.getStatusText = function () {
-        switch (this.status()) {
-            case "Active":
-                return "will close in " + this.getTimeUntilEnd(true);
-            case "Completed":
-                return "ended " + this.getTimeSinceEnd(true) + " ago.";
-            case "":
-                return "will start in " + event.getTimeUntilStart(true);
-            default:
-                return "Unknown";
-        }
-    };
+   ... Extra methods
 
     return angular.extend(DurationObject, Entity);
 }]);
@@ -84,24 +67,96 @@ angular.module('my-module').factory('DurationObject', ["Entity", "DateMutator", 
 
 And then we allow the API to gather the JSON and transform it:
 ```javascript
-    API.get('http://whereeverasingleobject.json').singluar().as(DurationObject); // Returns a single DurationObject
-    API.get('http://whereeveranarrayobject.json').as(DurationObject); // Returns an array of DurationObjects
+    EntityAPI.get('http://whereeverasingleobject.json').singluar().as(DurationObject); // Returns a single DurationObject
+    EntityAPI.get('http://whereeveranarrayobject.json').as(DurationObject); // Returns an array of DurationObjects
 ```
 
 ## Components
 
 ### Entities
 
-//TODO Docs
+An Entity is a simple AngularJS object extending the AngularJS Entity Factory.
+```javascript
+return angular.extend(DurationObject, Entity);
+```
+These entities have the Entity.Build function allowing the API to call the build function for your particular entity type, scanning it for Mutators.
 
 ### Mutators
 
-//TODO Docs
+Currently, only 2 Mutators have been written. (More to be added with feedback?).
 
-### API
+A Date Mutator and an EntityMutator, allowing inner Objects to also be converted to entities
 
-//TODO Docs
+```json
+{"innerEntity": {sampleDate: "2016-02-19T15:21:52.000+0000"}}
+```
+We need an entity per nested object.
+```javascript
+.factory('OuterObject', ["Entity", "EntityMutator", "InnerObject", function (Entity, EntityMutator, InnerObject) {
 
+    function OuterObject() {
+    }
+    
+    OuterObject.prototype.innerEntity = new EntityMutator(InnerObject);
+    
+   ... Extra methods
+    return angular.extend(OuterObject, Entity);
+}]).factory('InnerObject', ["Entity", "DateMutator", "InnerObject", function (Entity, DateMutator, InnerObject) {
+
+    function InnerObject() {
+    }
+    
+    InnerObject.prototype.innerEntity = new DateMutator(InnerObject);
+    
+   ... Extra methods
+    return angular.extend(InnerObject, Entity);
+}]);
+```
+Mutators have been written in such a way that the Builder will accept both an Array and an Object.
+```json
+{"innerEntity": {sampleDate: "2016-02-19T15:21:52.000+0000"}}
+{"innerEntity": {sampleDate: ["2016-02-19T15:21:52.000+0000","2016-02-19T15:21:52.000+0000"]}}
+```
+#### Creating Mutators
+
+```javascript
+    .factory('DoNothingMutator', ["Mutator", function (Mutator) {
+        return function () { //I'd like to point out that I'm 60% sure that I have one too many functions here
+            return new Mutator(function (field) {
+               //This mutator does nothing.
+               return field;
+            }, false); //By Changing false to true, you can modify Arrays, rather than the objects in the array itself (If you want to add methods to the arrays)
+        };
+    }]);
+```
+
+
+### EntityAPI
+
+   Most methods in EntityAPI either return EntityAPI or a promise with the exception of delete. 
+   (Need ideas here, the api can certainly be improved)
+   
+   #### Config
+   
+   `EntityAPIProvider.setApiUrl("http://baseurl.com");` 
+   This adds a base url to all EntityApi methods.
+
+   `EntityAPIProvider.setEntityIdentity("MyDatabaseIdentifier");` 
+   Defaults to "id", With entity identity being defined, arrays gathered by `EntityAPI.get("/MyUrl").as(EntityType);` 
+   To have 3 added methods. 
+   ```javascript
+   EntityAPI.get("/MyUrl").as(EntityType).then(function(entityTypeArray) {
+      var singleEntity = entityTypeArray.getEntity(5); //Returns EntityType where (entityTypeArray[index].<entityIdentity> == 5)
+      var singleEntityIndex = entityTypeArray.getEntityIndex(5); //Returns index where (entityTypeArray[index].<entityIdentity> == 5)
+      entityTypeArray.removeEntity(5); //Removes (Splices) the entity where entityIdentity == 5 
+   });
+   ```
+   `EntityAPIProvider.setEntityIdentity(null);` Stops the methods from being added to the arrays.
+   
+   `EntityAPIProvider.setOnError(function(error){});`
+   Adds a function to be called when $http returns an error
+   
+get, post, delete and 
 ## License
 
 MIT License
