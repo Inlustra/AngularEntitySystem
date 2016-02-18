@@ -1,5 +1,5 @@
 angular.module('angular-entity-system')
-    .provider('APIConfig', function () {
+    .provider('EntityAPI', function () {
         var apiUrl = '';
         var entityIdentity = 'id';
         var onError = function (error) {
