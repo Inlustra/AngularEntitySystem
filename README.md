@@ -1,4 +1,4 @@
-# Angular Entity System
+# Angular Entity System v0.0.2
 
 An entity system wrapper used to turn raw JSON objects into useful entities!
 
