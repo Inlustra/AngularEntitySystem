@@ -3,7 +3,7 @@
   "description": "A custom API, Entity and Factory system for AngularJS",
   "version": "0.0.1",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "ignore": [
     "src",
     ".bowerrc",
