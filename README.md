@@ -121,7 +121,7 @@ Mutators have been written in such a way that the Builder will accept both an Ar
 
 ```javascript
     .factory('DoNothingMutator', ["Mutator", function (Mutator) {
-        return function () { //I'd like to point out that I'm 60% sure that I have one too many functions here
+        return function () { //I'd like to point out that I'm 70% sure that I have too many functions here
             return new Mutator(function (field) {
                //This mutator does nothing.
                return field;
@@ -129,6 +129,8 @@ Mutators have been written in such a way that the Builder will accept both an Ar
         };
     }]);
 ```
+
+If anyone would like to add a common Mutator type, please do so with a pull-request and I'll merge them into the main branch
 
 
 ### EntityAPI
